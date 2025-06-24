@@ -2,10 +2,10 @@ import React from "react"
 import './index.css'
 import { Routes,Route } from "react-router-dom"
 import { Home } from "./pages/Home"
-import { About } from "./pages/About"
+import { MoviePage } from "./pages/MoviePage"
 import { Header } from "./components/Header"
 import { Footer } from "./components/Footer"
-import { Navbar } from "./components/Navbar"
+import { AboutPage } from "./pages/About"
 
 function App() {
 
@@ -13,10 +13,11 @@ function App() {
   return (
      <> 
      <Header/>
-     <Navbar/>
+  
     <Routes>
       <Route path="/" element={<Home/>}/>
-      <Route path="/about" element={<About/>}/>
+      <Route path="/about" element={<AboutPage/>}/>
+     <Route path="/movie/:id" element={<MoviePage/>}/>
     </Routes>
     <Footer/>
    </>

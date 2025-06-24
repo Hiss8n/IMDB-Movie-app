@@ -1,63 +1,50 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { SearchBox } from '../components/SearchBox'
+/* const API_KEY=process.env.TMDB_API_KEY; */
+import React, { useEffect, useState } from "react";
+import { SearchBox } from "../components/SearchBox";
+import { Card } from "../components/Card";
 
-export const Home = ({searchParams}) => {
+export const Home = () => {
+  /*   const genre=searchParams.genre || 'FetchTrending' */
+  const [results, setResults] = useState([]);
+  const [loading, setIsLoading] = useState(true);
+  const [error, setError] = useState(false);
+  /* ${genre==='fetchTopRated' ? '/movie/top_rated':'/trending/all/week'} */
 
-    const [movies,setMovies]=useState([]);
-    const [loading,setIsLoading]=useState(true)
-    const [error,setError]=useState(false)
+  const fetchMovies = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(
+        `https://api.themoviedb.org/3/discover/movie?api_key=90070f247ab06aa7227129104522f6f4&language=en-US&sort_by=popularity.desc&page=1`,
+        {next:{revalidate:100000}}
+      );
 
-    const fetchMovies=async()=>{
-        setIsLoading(true)
-        try {
-            const res= await fetch('https://dummyjson.com/products')
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error("Can not fetch movies");
+      }
 
-            const result= await res.json();
-            setMovies(result.products)
-          
+      const result = data.results;
+      setResults(result)
+      
+      
 
-        console.log(result.products);
-
-        } catch (error) {
-            setIsLoading(false)
-            console.error('Error',error)
-            
-        }
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Error", error);
     }
-    useEffect(()=>{
-        fetchMovies()
-    },[])
+  };
+  useEffect(() => {
+    fetchMovies();
+  }, []);
 
-  
-   /*  if(setIsLoading) return <h3>Loading data...</h3> */
+  /*  if(setIsLoading) return <h3>Loading data...</h3> */
   return (
-    <> 
-    <SearchBox/>
-    <div className='min-h-screen flex flex-wrap w-full  dark:bg-gray-600 dark:text-slate-200'  >
-        <div className='flex flex-wrap  gap-4 p-2 items-center justify-center'> 
-        {
-           movies.map((movie)=>
-                <div className='w-[350px] h-[280px]  border-sm shadow-lg border-none border-gray-200' key={movie.id}>
-            <Link >
-            <img
-            src={movie.images}
-            width={200}
-            />
-            <div className='flex text-sm font-semibold mt-1 flex-col'>
-                <h3 className='text-md font-bold ml-1'>movie.title</h3>
-                <p className='text-sm overflow-hidden text-ellipsis 
-                whitespace-nowrap trancate line-clap-3'>{movie.description}</p>
-              
-                <div className='flex justify-between items-center mx-4'>
-                      <small className='text-sm text-red-400'>{movie.price}</small>
-                      <button className='py-1 bg-green-400 shadow rounded'>AddTo card</button>
-                </div>
-                </div>
-            </Link></div>)
-        }
-        </div>
+    <>
+      <SearchBox />
+    <div className='sm:grid sm:grid-cols lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 max-w-6xl mx-auto py-3 dark:bg-gray-600 w-full'>
+
+        {results.map((result)=><Card key={result.id} result={result}/>)}
     </div>
     </>
-  )
-}
+  );
+};

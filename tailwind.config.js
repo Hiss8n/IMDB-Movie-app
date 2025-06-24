@@ -10,4 +10,7 @@ export default {
     extend: {},
   },
   plugins: [],
+  Images:{
+    domains:['image.tmdb.org'],
+  }
 }
